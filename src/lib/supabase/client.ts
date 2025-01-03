@@ -8,38 +8,51 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables');
 }
 
-// Get the current site URL in development or production
 const siteUrl = import.meta.env.PROD 
   ? 'https://www.beatorbot.com'
   : import.meta.env.VITE_SITE_URL || 'http://localhost:3000';
 
-// Create Supabase client with proper configuration
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
     flowType: 'pkce',
-    storage: {
-      getItem: (key: string) => {
-        return localStorage.getItem(key);
-      },
-      setItem: (key: string, value: string) => {
-        localStorage.setItem(key, value);
-      },
-      removeItem: (key: string) => {
-        localStorage.removeItem(key);
-      },
-    },
-    // Set the correct redirect URL
-    redirectTo: `${siteUrl}/auth/callback`
+    storage: window.localStorage,
+    redirectTo: `${siteUrl}/auth/callback`,
+    debug: true
   }
 });
 
-// Set up auth state change listener
 supabase.auth.onAuthStateChange((event, session) => {
-  console.log('Auth state changed:', event, session?.user?.id);
+  console.log('Auth state changed:', {
+    event,
+    userId: session?.user?.id,
+    email: session?.user?.email,
+    timestamp: new Date().toISOString()
+  });
+  
+  if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+    window.localStorage.setItem('supabase.auth.event', JSON.stringify({
+      event,
+      timestamp: new Date().toISOString()
+    }));
+  }
 });
 
-// Export a function to get the client
+export async function checkSupabaseConnection() {
+  try {
+    const { data, error } = await supabase.auth.getSession();
+    if (error) {
+      console.error('Supabase connection error:', error);
+      return false;
+    }
+    console.log('Supabase connection healthy:', !!data.session);
+    return true;
+  } catch (err) {
+    console.error('Failed to check Supabase connection:', err);
+    return false;
+  }
+}
+
 export const getSupabaseClient = () => supabase;
