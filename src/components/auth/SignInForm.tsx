@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Mail, Lock, Loader } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { AuthModal } from './AuthModal';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 interface SignInFormProps {
@@ -12,6 +13,7 @@ interface SignInFormProps {
 
 export function SignInForm({ showSignIn, setShowSignIn, switchToSignUp }: SignInFormProps) {
   const { signIn } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,7 +21,7 @@ export function SignInForm({ showSignIn, setShowSignIn, switchToSignUp }: SignIn
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (loading) return; // Prevent multiple submissions
+    if (loading) return;
     
     setLoading(true);
     setError('');
@@ -28,13 +30,14 @@ export function SignInForm({ showSignIn, setShowSignIn, switchToSignUp }: SignIn
       console.log('Starting sign in process...');
       await signIn(email, password);
       console.log('Sign in successful');
-      // Form will be closed by AuthContext after successful sign in
+      toast.success('Successfully signed in!');
+      setShowSignIn(false);
+      navigate('/profile');
     } catch (err) {
       console.error('Sign in error:', err);
       let errorMessage = 'Failed to sign in. Please try again.';
       
       if (err instanceof Error) {
-        // Handle specific Supabase errors
         if (err.message.includes('Invalid login credentials')) {
           errorMessage = 'Invalid email or password';
         } else if (err.message.includes('Email not confirmed')) {

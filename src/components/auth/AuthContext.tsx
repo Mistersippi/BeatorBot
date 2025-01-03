@@ -2,7 +2,6 @@ import { createContext, useContext, useState, useCallback, useEffect } from 'rea
 import type { User } from '@supabase/supabase-js';
 import { supabase } from '../../lib/supabase/client';
 import { syncUserProfile } from '../../lib/supabase/auth';
-import { useNavigate } from 'react-router-dom';
 
 interface AuthUser extends User {
   username: string;
@@ -33,13 +32,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
 
-  // Initialize auth state
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Get the current session
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
@@ -64,7 +60,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     initializeAuth();
 
-    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session?.user);
       
@@ -93,47 +88,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (data.user) {
         await syncUserProfile(data.user);
         setUser(data.user as AuthUser);
-        setShowSignIn(false);
-        navigate('/profile');
       }
     } catch (error) {
       console.error('Sign in error:', error);
       throw error;
     }
-  }, [navigate]);
+  }, []);
 
-  const signUp = useCallback(
-    async (email: string, password: string, metadata?: { username?: string }) => {
-      try {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
-            data: {
-              username: metadata?.username,
-            },
+  const signUp = useCallback(async (email: string, password: string, metadata?: { username?: string }) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: {
+            username: metadata?.username,
           },
-        });
+        },
+      });
 
-        if (error) throw error;
+      if (error) throw error;
 
-        // If sign up successful and we have a session, create the user profile
-        if (data.user) {
-          await syncUserProfile(data.user);
-        }
-
-        // Return whether email confirmation is required
-        return {
-          requiresEmailConfirmation: data.user?.identities?.length === 0,
-        };
-      } catch (error) {
-        console.error('Sign up error:', error);
-        throw error;
+      if (data.user) {
+        await syncUserProfile(data.user);
       }
-    },
-    []
-  );
+
+      return {
+        requiresEmailConfirmation: data.user?.identities?.length === 0,
+      };
+    } catch (error) {
+      console.error('Sign up error:', error);
+      throw error;
+    }
+  }, []);
 
   const handleSignOut = useCallback(async () => {
     try {
