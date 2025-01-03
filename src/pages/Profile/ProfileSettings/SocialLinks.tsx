@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Save, Music2, Globe, Instagram, Twitter } from 'lucide-react';
-import { FormField } from '../../../components/submit/FormField';
+import { FormField } from '../../../components/form/FormField';
 
 interface SocialLink {
   id: string;

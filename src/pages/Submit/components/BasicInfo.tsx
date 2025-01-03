@@ -1,4 +1,4 @@
-import { FormField } from '../../../components/submit/FormField';
+import { FormField } from '../../../components/form/FormField';
 import { GenreSelect } from '../../../components/submit/GenreSelect';
 import type { SubmissionFormData } from '../../../lib/submissions/types';
 

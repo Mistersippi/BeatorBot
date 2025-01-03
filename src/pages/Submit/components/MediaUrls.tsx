@@ -1,5 +1,5 @@
 import { Music, Image } from 'lucide-react';
-import { FormField } from '../../../components/submit/FormField';
+import { FormField } from '../../../components/form/FormField';
 import type { SubmissionFormData } from '../../../lib/submissions/types';
 
 interface MediaUrlsProps {
