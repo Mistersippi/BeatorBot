@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply antialiased text-gray-900;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold transition-colors;
+  }
+  
+  .btn-primary {
+    @apply bg-purple-600 text-white hover:bg-purple-700;
+  }
+  
+  .btn-secondary {
+    @apply bg-purple-100 text-purple-600 hover:bg-purple-200;
+  }
+}

@@ -1,0 +1,57 @@
+@keyframes sparkle-1 {
+  0%, 100% { transform: translate(0, 0) scale(0); opacity: 0; }
+  25% { transform: translate(-10px, -10px) scale(1); opacity: 1; }
+  50% { transform: translate(-20px, -20px) scale(0); opacity: 0; }
+}
+
+@keyframes sparkle-2 {
+  0%, 100% { transform: translate(0, 0) scale(0); opacity: 0; }
+  25% { transform: translate(10px, -10px) scale(1); opacity: 1; }
+  50% { transform: translate(20px, -20px) scale(0); opacity: 0; }
+}
+
+@keyframes sparkle-3 {
+  0%, 100% { transform: translate(0, 0) scale(0); opacity: 0; }
+  25% { transform: translate(-10px, 10px) scale(1); opacity: 1; }
+  50% { transform: translate(-20px, 20px) scale(0); opacity: 0; }
+}
+
+@keyframes sparkle-4 {
+  0%, 100% { transform: translate(0, 0) scale(0); opacity: 0; }
+  25% { transform: translate(10px, 10px) scale(1); opacity: 1; }
+  50% { transform: translate(20px, 20px) scale(0); opacity: 0; }
+}
+
+.animate-sparkle-1 {
+  animation: sparkle-1 2s infinite;
+}
+
+.animate-sparkle-2 {
+  animation: sparkle-2 2s infinite;
+  animation-delay: 0.5s;
+}
+
+.animate-sparkle-3 {
+  animation: sparkle-3 2s infinite;
+  animation-delay: 1s;
+}
+
+.animate-sparkle-4 {
+  animation: sparkle-4 2s infinite;
+  animation-delay: 1.5s;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  z-index: -1;
+  border-radius: inherit;
+  transition: opacity 0.3s;
+  opacity: 0;
+}
+
+.feature-card:hover::before {
+  opacity: 1;
+}

@@ -1,0 +1,62 @@
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 40s linear infinite;
+  display: flex;
+  width: max-content;
+}
+
+.animate-scroll-left:hover {
+  animation-play-state: paused;
+}
+
+.floating-icon {
+  animation: float 3s ease-in-out infinite;
+}
+
+.pulse-icon {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Gradient animations */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-animate {
+  background-size: 200% 200%;
+  animation: gradient 15s ease infinite;
+}
