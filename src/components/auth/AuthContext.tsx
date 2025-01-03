@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback, useEffect } from 'rea
 import type { User } from '@supabase/supabase-js';
 import { supabase } from '../../lib/supabase/client';
 import { syncUserProfile } from '../../lib/supabase/auth';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthUser extends User {
   username: string;
@@ -32,6 +33,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Initialize auth state
   useEffect(() => {
@@ -92,12 +94,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await syncUserProfile(data.user);
         setUser(data.user as AuthUser);
         setShowSignIn(false);
+        navigate('/profile');
       }
     } catch (error) {
       console.error('Sign in error:', error);
       throw error;
     }
-  }, []);
+  }, [navigate]);
 
   const signUp = useCallback(
     async (email: string, password: string, metadata?: { username?: string }) => {
