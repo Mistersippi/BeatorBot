@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Loader } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { AuthModal } from './AuthModal';
-import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 interface SignInFormProps {
@@ -30,9 +30,16 @@ export function SignInForm({ showSignIn, setShowSignIn, switchToSignUp }: SignIn
       console.log('Starting sign in process...');
       await signIn(email, password);
       console.log('Sign in successful');
+      
       toast.success('Successfully signed in!');
-      setShowSignIn(false);
-      navigate('/profile');
+      
+      // Add a small delay before closing modal and navigating
+      setTimeout(() => {
+        setLoading(false);  // Clear loading state
+        setShowSignIn(false);  // Close the modal
+        navigate('/profile');  // Navigate to profile
+      }, 1000);
+
     } catch (err) {
       console.error('Sign in error:', err);
       let errorMessage = 'Failed to sign in. Please try again.';
@@ -47,16 +54,35 @@ export function SignInForm({ showSignIn, setShowSignIn, switchToSignUp }: SignIn
         }
       }
       
-      console.error('Setting error state:', errorMessage);
       setError(errorMessage);
       toast.error(errorMessage);
-    } finally {
       setLoading(false);
     }
   };
 
+  // Cleanup effect
+  useEffect(() => {
+    return () => {
+      setLoading(false);
+      setError('');
+    };
+  }, []);
+
+  // Handle modal close
+  const handleClose = () => {
+    setShowSignIn(false);
+    setLoading(false);
+    setError('');
+    setEmail('');
+    setPassword('');
+  };
+
   return (
-    <AuthModal isOpen={showSignIn} onClose={() => setShowSignIn(false)} title="Sign In">
+    <AuthModal 
+      isOpen={showSignIn} 
+      onClose={handleClose}
+      title="Sign In"
+    >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
           <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm">
@@ -102,7 +128,7 @@ export function SignInForm({ showSignIn, setShowSignIn, switchToSignUp }: SignIn
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || !email || !password}
           className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
         >
           {loading ? (
@@ -121,6 +147,7 @@ export function SignInForm({ showSignIn, setShowSignIn, switchToSignUp }: SignIn
             type="button"
             onClick={switchToSignUp}
             className="text-purple-600 hover:text-purple-700 font-medium"
+            disabled={loading}
           >
             Sign Up
           </button>
