@@ -12,8 +12,10 @@ export function UserMenu() {
   // Debug log to check user role
   console.log('UserMenu - Current user:', user);
   
-  // Check if user has admin role either in top-level or metadata
-  const isAdmin = user?.role === 'admin' || user?.user_metadata?.role === 'admin';
+  // Check if user has admin role in any of the possible locations
+  const isAdmin = user?.role === 'admin' || 
+                 user?.user_metadata?.role === 'admin' || 
+                 user?.account_type === 'admin';
 
   const handleNavigation = (path: string) => {
     setIsOpen(false);
