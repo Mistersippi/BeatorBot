@@ -40,6 +40,8 @@ export function SignInForm({ showSignIn, setShowSignIn, switchToSignUp }: SignIn
         navigate('/profile');  // Navigate to profile
       }, 1000);
 
+      console.log('Reached setTimeout callback — about to navigate /profile');
+
     } catch (err) {
       console.error('Sign in error:', err);
       let errorMessage = 'Failed to sign in. Please try again.';
