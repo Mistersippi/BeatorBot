@@ -77,14 +77,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
+    // 1) Your debug console log
+    console.log('AuthContext signIn called with email:', email);
+  
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-
+  
       if (error) throw error;
-
+  
       if (data.user) {
         await syncUserProfile(data.user);
         setUser(data.user as AuthUser);
